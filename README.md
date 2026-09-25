@@ -39,5 +39,5 @@ mvn clean spring-boot:run
 ## API Documentation
 
 Once the service is running, Swagger UI is accessible at:
-- **Swagger UI:** [http://localhost:5003/swagger-ui/index.html](http://localhost:5003/swagger-ui/index.html)
-- **OpenAPI JSON:** [http://localhost:5003/v3/api-docs](http://localhost:5003/v3/api-docs)
+- **Swagger UI:** [http://localhost:5005/swagger-ui/index.html](http://localhost:5005/swagger-ui/index.html)
+- **OpenAPI JSON:** [http://localhost:5005/v3/api-docs](http://localhost:5005/v3/api-docs)

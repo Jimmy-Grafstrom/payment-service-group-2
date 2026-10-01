@@ -1,10 +1,8 @@
 package se.iths.paymentservicegroup2.service;
 
-import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,19 +23,11 @@ public class PaymentService {
 
     private final PaymentRepository repository;
 
-    @Value("${stripe.secret-key}")
-    private String secretKey;
-
     @Value("${stripe.success-url}")
     private String successUrl;
 
     @Value("${stripe.cancel-url}")
     private String cancelUrl;
-
-    @PostConstruct
-    void initStripe() {
-        Stripe.apiKey = secretKey;
-    }
 
     public PaymentResponseDto createCheckoutSession(PaymentRequestDto paymentRequestDto, String userId) {
 

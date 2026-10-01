@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import jakarta.persistence.Column;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,8 +21,9 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "order_id", nullable = false)
-    @NotNull
     private Long orderId;
+    @Column(name = "user_id", nullable = false)
+    private String userId;
     @Column(unique = true)
     private String stripeSessionId;
     private String stripePaymentIntentId;
@@ -34,5 +34,5 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentStatus status;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 }

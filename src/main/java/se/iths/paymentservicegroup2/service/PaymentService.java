@@ -14,6 +14,7 @@ import se.iths.paymentservicegroup2.model.Payment;
 import se.iths.paymentservicegroup2.model.PaymentStatus;
 import se.iths.paymentservicegroup2.repository.PaymentRepository;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
@@ -36,9 +37,8 @@ public class PaymentService {
         }
 
         long amountInOre = paymentRequestDto.amount()
-                .setScale(2, RoundingMode.UNNECESSARY)
-                .movePointRight(2)
-                .longValueExact();
+                .multiply(BigDecimal.valueOf(100))
+                .longValue();
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)

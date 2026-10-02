@@ -12,7 +12,7 @@ public record PaymentRequestDto(
         @DecimalMin(value = "3.00", message = "Amount must be at least 3.00")
         @Digits(integer = 10, fraction = 2)
         BigDecimal amount,
-        @Pattern(regexp = "^[A-Za-z]{3}$")
+        @Pattern(regexp = "^(?i)(SEK|EUR|USD)$")
         @NotBlank(message = "Currency is required")
         String currency
 ) {

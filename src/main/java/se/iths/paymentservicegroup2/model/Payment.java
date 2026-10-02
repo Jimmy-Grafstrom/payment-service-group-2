@@ -20,9 +20,9 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "order_id", nullable = false, unique = true)
     private Long orderId;
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private String userId;
     @Column(unique = true)
     private String stripeSessionId;

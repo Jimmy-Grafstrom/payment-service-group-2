@@ -1,8 +1,6 @@
 package se.iths.paymentservicegroup2.dto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
@@ -11,9 +9,10 @@ public record PaymentRequestDto(
         Long orderId,
 
         @NotNull
-        @DecimalMin(value = "0.5", message = "Amount must be at least 0.5")
+        @DecimalMin(value = "3.00", message = "Amount must be at least 3.00")
+        @Digits(integer = 10, fraction = 2)
         BigDecimal amount,
-
+        @Pattern(regexp = "^(?i)(SEK|EUR|USD)$")
         @NotBlank(message = "Currency is required")
         String currency
 ) {

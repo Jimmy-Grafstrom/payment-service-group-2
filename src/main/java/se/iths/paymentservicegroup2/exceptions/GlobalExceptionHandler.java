@@ -10,6 +10,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(OrderAlreadyPaidException.class)
+    public ResponseEntity<String> handleOrderAlreadyPaidException(OrderAlreadyPaidException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(PaymentProviderException.class)
+    public ResponseEntity<String> handlePaymentProvider(PaymentProviderException e) {
+        log.error("Stripe error", e);
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Payment provider is unavailable or rejected the request");
+
+    }
     @ExceptionHandler(InvalidWebhookSignatureException.class)
     public ResponseEntity<String> handleInvalidSignature(InvalidWebhookSignatureException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

@@ -19,6 +19,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handlePaymentProvider(PaymentProviderException e) {
         log.error("Stripe error", e);
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body("Payment provider is unavailable or rejected the request");
+
+    }
     @ExceptionHandler(InvalidWebhookSignatureException.class)
     public ResponseEntity<String> handleInvalidSignature(InvalidWebhookSignatureException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());

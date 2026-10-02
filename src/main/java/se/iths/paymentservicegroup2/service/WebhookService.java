@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import se.iths.paymentservicegroup2.dto.PaymentConfirmationDto;
 import se.iths.paymentservicegroup2.exceptions.InvalidWebhookSignatureException;
 import se.iths.paymentservicegroup2.exceptions.WebhookProcessingException;
 import se.iths.paymentservicegroup2.model.Payment;
 import se.iths.paymentservicegroup2.model.PaymentStatus;
+import se.iths.paymentservicegroup2.publisher.PaymentPublisher;
 import se.iths.paymentservicegroup2.repository.PaymentRepository;
 
 @Slf4j
@@ -21,6 +23,7 @@ import se.iths.paymentservicegroup2.repository.PaymentRepository;
 public class WebhookService {
 
     private final PaymentRepository paymentRepository;
+    private final PaymentPublisher paymentPublisher;
 
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
@@ -78,6 +81,16 @@ public class WebhookService {
             }
             paymentRepository.save(payment);
             log.info("Payment status updated to COMPLETED for payment ID: {}", payment.getId());
+
+            PaymentConfirmationDto confirmationDto = new PaymentConfirmationDto(
+                    payment.getId(),
+                    payment.getOrderId(),
+                    payment.getAmount(),
+                    payment.getCurrency(),
+                    payment.getStatus().name(),
+                    payment.getStripePaymentIntentId()
+            );
+            paymentPublisher.sendPaymentConfirmation(confirmationDto);
         }
     }
 

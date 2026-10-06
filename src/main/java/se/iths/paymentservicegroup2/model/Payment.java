@@ -35,4 +35,5 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
     private LocalDateTime createdAt;
+    private String stripeIdempotencyKey;
 }

@@ -65,34 +65,59 @@ public class WebhookService {
     private void handleCheckoutSessionCompleted(Event event) {
         StripeObject stripeObject = event.getDataObjectDeserializer().getObject().orElse(null);
 
-        if (stripeObject instanceof Session session) {
-            String sessionId = session.getId();
-            log.info("Checkout session completed: {}", sessionId);
-
-            Payment payment = paymentRepository.findByStripeSessionId(sessionId).orElse(null);
-            if (payment == null) {
-                log.warn("Payment not found for session ID: {}", sessionId);
-                return;
-            }
-
-            payment.setStatus(PaymentStatus.COMPLETED);
-            if (session.getPaymentIntent() != null) {
-                payment.setStripePaymentIntentId(session.getPaymentIntent());
-            }
-            paymentRepository.save(payment);
-            log.info("Payment status updated to COMPLETED for payment ID: {}", payment.getId());
-
-            PaymentConfirmationDto confirmationDto = new PaymentConfirmationDto(
-                    payment.getId(),
-                    payment.getOrderId(),
-                    payment.getAmount(),
-                    payment.getCurrency(),
-                    payment.getStatus().name(),
-                    payment.getStripePaymentIntentId()
-            );
-            paymentPublisher.sendPaymentConfirmation(confirmationDto);
+        if (!(stripeObject instanceof Session session)) {
+            log.warn("Stripe-eventet innehöll ingen checkout-session");
+            return;
         }
+
+        String sessionId = session.getId();
+        log.info("Checkout session completed: {}", sessionId);
+
+        Payment payment = paymentRepository
+                .findByStripeSessionId(sessionId)
+                .orElse(null);
+
+        if (payment == null) {
+            String paymentIdValue = session.getMetadata() == null
+                    ? null
+                    : session.getMetadata().get("paymentId");
+
+            if (paymentIdValue != null && !paymentIdValue.isBlank()) {
+                try {
+                    payment = paymentRepository
+                            .findById(Long.valueOf(paymentIdValue))
+                            .orElse(null);
+                } catch (NumberFormatException e) {
+                    log.warn("Ogiltigt paymentId i metadata för Stripe-session {}", sessionId);
+                }
+            }
+        }
+
+        if (payment == null) {
+            log.warn("Ingen betalning hittades för Stripe-session {}", sessionId);
+            return;
+        }
+
+        payment.setStripeSessionId(sessionId);
+        payment.setStatus(PaymentStatus.COMPLETED);
+
+        if (session.getPaymentIntent() != null) {
+            payment.setStripePaymentIntentId(session.getPaymentIntent());
+        }
+        paymentRepository.save(payment);
+        log.info("Payment status updated to COMPLETED for payment ID: {}", payment.getId());
+
+        PaymentConfirmationDto confirmationDto = new PaymentConfirmationDto(
+                payment.getId(),
+                payment.getOrderId(),
+                payment.getAmount(),
+                payment.getCurrency(),
+                payment.getStatus().name(),
+                payment.getStripePaymentIntentId()
+        );
+        paymentPublisher.sendPaymentConfirmation(confirmationDto);
     }
+
 
     private void handleCheckoutSessionExpired(Event event) {
         StripeObject stripeObject = event.getDataObjectDeserializer().getObject().orElse(null);

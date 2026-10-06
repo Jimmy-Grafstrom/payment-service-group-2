@@ -22,8 +22,14 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/checkout")
-    public ResponseEntity<PaymentResponseDto> createCheckoutSession(@Valid @RequestBody PaymentRequestDto paymentRequestDto, @AuthenticationPrincipal Jwt jwt) {
-        PaymentResponseDto response = paymentService.createCheckoutSession(paymentRequestDto, jwt.getSubject());
+    public ResponseEntity<PaymentResponseDto> createCheckoutSession(
+            @Valid @RequestBody PaymentRequestDto request,
+            @AuthenticationPrincipal Jwt jwt) {
+        PaymentResponseDto response = paymentService.createCheckoutSession(
+                request.orderId(),
+                jwt.getSubject(),
+                "Bearer " + jwt.getTokenValue()
+        );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

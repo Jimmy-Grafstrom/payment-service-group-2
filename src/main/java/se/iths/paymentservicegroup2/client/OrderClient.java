@@ -10,7 +10,7 @@ import se.iths.paymentservicegroup2.dto.PaymentOrderDetailsDto;
 public class OrderClient {
     private final RestClient restClient;
 
-    public OrderClient(@Value("${order-service.base-url}") String baseUrl) {
+    public OrderClient(@Value("${order-service.base-url:http://localhost:9000}") String baseUrl) {
         this.restClient = RestClient.builder()
                 .baseUrl(baseUrl)
                 .build();

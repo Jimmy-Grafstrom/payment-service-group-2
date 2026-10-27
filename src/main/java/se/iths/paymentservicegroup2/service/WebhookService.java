@@ -17,6 +17,10 @@ import se.iths.paymentservicegroup2.model.PaymentStatus;
 import se.iths.paymentservicegroup2.publisher.PaymentPublisher;
 import se.iths.paymentservicegroup2.repository.PaymentRepository;
 
+/**
+ * Service responsible for processing Stripe webhook notifications.
+ * Verifies webhook signatures, updates payment statuses, and broadcasts payment confirmations.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,14 @@ public class WebhookService {
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
 
+    /**
+     * Parses and handles an incoming Stripe webhook payload.
+     *
+     * @param payload   the raw JSON payload of the event sent by Stripe
+     * @param sigHeader the {@code Stripe-Signature} header value for signature verification
+     * @throws InvalidWebhookSignatureException if signature verification fails
+     * @throws WebhookProcessingException      if parsing the payload fails
+     */
     public void handleWebhook(String payload, String sigHeader) {
         Event event = parseAndVerifyEvent(payload, sigHeader);
 

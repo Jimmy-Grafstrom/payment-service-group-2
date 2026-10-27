@@ -21,10 +21,21 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Spring Security configuration for Payment Service.
+ * Configures stateless JWT-based OAuth2 authentication, endpoint permissions, CORS, and role extraction.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Configures the main HTTP security filter chain and authorization rules.
+     *
+     * @param http                         the {@link HttpSecurity} builder
+     * @param jwtAuthenticationConverter   the converter to map JWT claims to Spring Security authorities
+     * @return the configured {@link SecurityFilterChain}
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtAuthenticationConverter) {
         http

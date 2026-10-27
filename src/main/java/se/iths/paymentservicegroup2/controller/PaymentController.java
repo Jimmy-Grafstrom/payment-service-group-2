@@ -14,6 +14,9 @@ import se.iths.paymentservicegroup2.dto.PaymentRequestDto;
 import se.iths.paymentservicegroup2.dto.PaymentResponseDto;
 import se.iths.paymentservicegroup2.service.PaymentService;
 
+/**
+ * Controller for handling payment-related requests.
+ */
 @RestController
 @RequestMapping("/payment")
 @RequiredArgsConstructor
@@ -21,6 +24,14 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    /**
+     * Creates a checkout session for a payment via Stripe.
+     *
+     * @param request the {@link PaymentRequestDto} containing the order ID to be paid
+     * @param jwt     the {@link Jwt} token of the authenticated user
+     * @return a {@link ResponseEntity} with HTTP 201 (Created) containing the {@link PaymentResponseDto} with the checkout
+    ￹URL
+     */
     @PostMapping("/checkout")
     public ResponseEntity<PaymentResponseDto> createCheckoutSession(
             @Valid @RequestBody PaymentRequestDto request,

@@ -22,6 +22,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Service responsible for managing payment workflows and integrating with Stripe Checkout.
+ * Coordinates order verification with the order-service, tracks payment states,
+ * and handles idempotency during checkout session creation.
+ */
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -35,6 +40,21 @@ public class PaymentService {
     @Value("${stripe.cancel-url}")
     private String cancelUrl;
 
+    /**
+     * Creates or retrieves a Stripe Checkout session for a given order.
+     * <p>
+     * Verifies the order status with the order service, ensures the order has not
+     * already been paid, maintains idempotent session creation, and persists payment records.
+     * </p>
+     *
+     * @param orderId     the ID of the order to pay
+     * @param userId      the ID or subject of the user making the payment
+     * @param bearerToken the authorization Bearer token used to authenticate against the order service
+     * @return a {@link PaymentResponseDto} containing payment details and the Stripe checkout URL
+     * @throws OrderAlreadyPaidException if the order has already been marked as {@link PaymentStatus#COMPLETED}
+     * @throws PaymentProviderException  if interaction with the Stripe API fails
+     * @throws IllegalStateException     if the order is not in a payable state or payment state is invalid
+     */
     public PaymentResponseDto createCheckoutSession(Long orderId, String userId, String bearerToken) {
 
         PaymentOrderDetailsDto order = orderClient.getOrder(orderId, bearerToken);

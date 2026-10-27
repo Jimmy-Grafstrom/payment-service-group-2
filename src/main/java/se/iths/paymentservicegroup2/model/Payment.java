@@ -10,6 +10,10 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity representing a payment transaction in the system.
+ * Keeps track of order identifiers, Stripe checkout identifiers, amounts, and payment lifecycle state.
+ */
 @Entity
 @Setter
 @Getter
